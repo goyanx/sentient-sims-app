@@ -1,6 +1,11 @@
 import { HeadObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import log from 'electron-log';
+import { UpdateClient } from 'main/sentient-sims/clients/UpdateClient';
+import { appApiUrl } from 'main/sentient-sims/constants';
+import { ModUpdate } from 'main/sentient-sims/services/UpdateService';
+
+const updateClient = new UpdateClient(appApiUrl);
 
 export async function isNewVersionAvailable(currentVersionId: string, type = 'main'): Promise<boolean> {
   log.debug(`current version: ${currentVersionId}`);
@@ -27,6 +32,21 @@ export async function isNewVersionAvailable(currentVersionId: string, type = 'ma
     if (latestVersionId !== yourVersionId) {
       // A new version is available
       log.info(`New version available. Current: ${yourVersionId} Latest: ${latestVersionId}`);
+
+      if (authSession.credentials) {
+        const modUpdate: ModUpdate = {
+          type,
+          credentials: authSession.credentials,
+        };
+        try {
+          await updateClient.updateMod(modUpdate);
+          return false;
+        } catch (err) {
+          log.error(`Error installing update: ${JSON.stringify(err, null, 2)}`);
+          alert(`Error installing update, make sure The Sims 4 is closed: ${JSON.stringify(err, null, 2)}`);
+        }
+      }
+
       return true;
     }
 
