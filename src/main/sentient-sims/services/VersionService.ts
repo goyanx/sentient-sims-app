@@ -54,4 +54,12 @@ export class VersionService {
       };
     }
   }
+
+  getVersionHeaders(): Record<string, string> {
+    return {
+      'X-Sentient-Sims-App-Version': this.getAppVerson().version,
+      'X-Sentient-Sims-Mod-Version': this.getModVersion().version,
+      'X-Sentient-Sims-Game-Version': this.getModVersion().version,
+    };
+  }
 }

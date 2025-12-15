@@ -12,6 +12,7 @@ export class SentientSimsAIService extends VLLMAIService {
   getAuthorizationHeaders(): RawAxiosRequestHeaders {
     return {
       Authentication: this.ctx.settings.accessToken,
+      ...this.ctx.version.getVersionHeaders(),
     };
   }
 

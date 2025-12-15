@@ -31,6 +31,7 @@ export class AnimationsService {
         baseURL: this.ctx.settings.sentientSimsAIEndpoint,
         headers: {
           Authentication: this.ctx.settings.accessToken,
+          ...this.ctx.version.getVersionHeaders(),
         },
       });
 
@@ -95,6 +96,7 @@ export class AnimationsService {
       baseURL: this.ctx.settings.sentientSimsAIEndpoint,
       headers: {
         Authentication: this.ctx.settings.accessToken,
+        ...this.ctx.version.getVersionHeaders(),
       },
     });
 

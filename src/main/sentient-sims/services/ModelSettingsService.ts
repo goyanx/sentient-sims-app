@@ -1,6 +1,5 @@
 import { axiosClient } from '../clients/AxiosClient';
 import { AllModelSettings, ModelSettings, ModelSettingsType } from '../modelSettings';
-import { app } from 'electron';
 import log from 'electron-log';
 import { ApiContext } from './ApiContext';
 import { ApiType } from '../models/ApiType';
@@ -28,7 +27,7 @@ export class ModelSettingsService {
         url: '/modelsettings',
         baseURL: this.ctx.settings.sentientSimsAIEndpoint,
         headers: {
-          'X-Sentient-Sims-App-Version': app.getVersion(),
+          ...this.ctx.version.getVersionHeaders(),
         },
       });
 

@@ -23,6 +23,7 @@ export class InteractionRepository {
       baseURL: this.ctx.settings.sentientSimsAIEndpoint,
       headers: {
         Authentication: this.ctx.settings.accessToken,
+        ...this.ctx.version.getVersionHeaders(),
       },
     });
 
@@ -83,6 +84,7 @@ export class InteractionRepository {
       baseURL: this.ctx.settings.sentientSimsAIEndpoint,
       headers: {
         Authentication: this.ctx.settings.accessToken,
+        ...this.ctx.version.getVersionHeaders(),
       },
     });
 
