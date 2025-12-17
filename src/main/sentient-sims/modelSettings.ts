@@ -32,6 +32,7 @@ export const AllModelSettings: ModelSettingsType = {
     max_tokens: 3900,
     breakTokenString: '<unk>',
     breakStringTokens: [0],
+    maxResponseTokens: 90,
     stop: ['### Input:', '### Instruction:', '### Response:'],
   },
   'meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8': {

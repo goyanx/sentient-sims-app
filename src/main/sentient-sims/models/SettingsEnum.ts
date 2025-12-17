@@ -37,6 +37,7 @@ export enum SettingsEnum {
   ELEVENLABS_TTS_SETTINGS = 'elevenlabsTtsSettings',
   SETUP_WIZARD_PAGE = 'setupWizardPage',
   PATREON_LINKING = 'patreonLinking',
+  MAX_RESPONSE_TOKENS = 'maxResponseTokens',
 }
 
 export enum DeprecatedSettingsEnum {

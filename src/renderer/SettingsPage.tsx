@@ -31,6 +31,7 @@ import NovelAISettingsComponent from './settings/NovelAISettingsComponent';
 import GeminiSettingsComponent from './settings/GeminiSettingsComponent';
 import VoiceSettingsComponent from './settings/VoiceSettingsComponent';
 import { useSetupWizard } from './providers/SetupWizardProvider';
+import { AiMaxResponseLengthSettingsComponent } from './settings/AiMaxResponseLengthSettingsComponent';
 
 enum SettingsTabSelectionValue {
   Settings = 'settings',
@@ -154,6 +155,7 @@ export default function SettingsPage() {
             />
           </GeminiSettingsComponent>
           <AnimationMappingSettingsComponent apiType={aiSettings.aiApiType} />
+          <AiMaxResponseLengthSettingsComponent />
         </TabPanel>
         <TabPanel value={SettingsTabSelectionValue.Voice}>
           <VoiceSettingsComponent />

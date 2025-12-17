@@ -341,6 +341,15 @@ export class PromptRequestBuilderService {
       postures,
     );
 
+    const maxResponseTokens = Math.min(
+      options.modelSettings.maxResponseTokens ?? this.ctx.settings.maxResponseTokens,
+      this.ctx.settings.maxResponseTokens,
+    );
+
+    log.info(
+      `MaxResponseTokens: ${maxResponseTokens} modelSettings: ${options.modelSettings.maxResponseTokens} settings ${this.ctx.settings.maxResponseTokens}`,
+    );
+
     return {
       systemPrompt: formattedSystemPrompt,
       participants: sims.join('\n'),
@@ -349,7 +358,7 @@ export class PromptRequestBuilderService {
       season,
       memories: groupedMemories,
       action: formattedAction,
-      maxResponseTokens: 90,
+      maxResponseTokens,
       maxTokens: options.modelSettings.max_tokens,
       assistantPreResponse: formattedAssistantPreResponse,
       prePreAction: formattedPrePreAction,

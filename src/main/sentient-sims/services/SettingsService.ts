@@ -8,6 +8,7 @@ import {
   defaultElevenLabsEndpoint,
   defaultGeminiModel,
   defaultKokoroEndpoint,
+  defaultMaxResponseTokens,
   defaultTTSEnabled,
   defaultTTSVolume,
   defaultVLLMEndpoint,
@@ -175,6 +176,10 @@ export function defaultStore(cwd?: string) {
       [SettingsEnum.PATREON_LINKING.toString()]: {
         type: 'boolean',
         default: false,
+      },
+      [SettingsEnum.MAX_RESPONSE_TOKENS.toString()]: {
+        type: 'number',
+        default: defaultMaxResponseTokens,
       },
     },
     migrations: {
@@ -534,6 +539,18 @@ export class SettingsService {
 
   set vllmModel(value: string) {
     this.set(SettingsEnum.VLLM_MODEL, value);
+  }
+
+  get maxResponseTokens(): number {
+    return this.get(SettingsEnum.MAX_RESPONSE_TOKENS) as number;
+  }
+
+  set maxResponseTokens(value: number) {
+    if (value < 30 || value > 600) {
+      throw new Error(`maxResponseTokens must be between 30 and 600`);
+    }
+
+    this.set(SettingsEnum.MAX_RESPONSE_TOKENS, value);
   }
 }
 
