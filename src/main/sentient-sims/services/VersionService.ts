@@ -34,7 +34,14 @@ export class VersionService {
   }
 
   getAppVerson(): Version {
-    return { version: app.getVersion() };
+    try {
+      return { version: app.getVersion() };
+    } catch (e: any) {
+      return {
+        version: 'none',
+        error: filterNullAndUndefined([`Unable to get app version`, e?.message]).join('\n'),
+      };
+    }
   }
 
   getGameVersion(): Version {
