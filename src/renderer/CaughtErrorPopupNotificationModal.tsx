@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 import { IpcRendererEvent } from 'electron';
 import { CaughtError } from 'main/sentient-sims/models/CaughtError';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SendLogModal } from './components/SendLogModal';
 
 type CaughtErrorState = {
@@ -15,12 +15,30 @@ export function CaughtErrorPopupNotificationModal() {
   });
   const [sendLogModalOpen, setSendLogModalOpen] = useState(false);
 
-  window.electron.onCaughtErrorPopupNotification((_event: IpcRendererEvent, caughtError: CaughtError) => {
-    setState({
-      open: true,
-      caughtError,
-    });
-  });
+  useEffect(() => {
+    const removeListener = window.electron.onCaughtErrorPopupNotification(
+      (_event: IpcRendererEvent, caughtError: CaughtError) => {
+        setState((prevState) => {
+          const isSameError = prevState.caughtError?.message === caughtError.message;
+
+          if (isSameError) {
+            return prevState;
+          }
+
+          return {
+            open: true,
+            caughtError,
+          };
+        });
+      },
+    );
+
+    return () => {
+      if (removeListener) {
+        removeListener();
+      }
+    };
+  }, []);
 
   const onClose = () => {
     setState({
