@@ -208,7 +208,7 @@ const cardData: CardData[] = [
     data: [
       {
         header: 'Cost',
-        points: ['Pay-as-you-go', 'Usage based', 'Free trial'],
+        points: ['Pay-as-you-go', 'Usage based', 'Free trial (LOW 20/day)'],
       },
       {
         header: 'Features',
