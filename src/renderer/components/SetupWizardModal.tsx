@@ -1004,12 +1004,6 @@ export function SetupWizardModal({ open, setOpen }: SetupWizardModalParameters) 
     currentWizardPage.setSetting(wizardPage.toString());
   };
 
-  useEffect(() => {
-    if (!open && currentWizardPage.value === WizardPage.SENTIENT_SIMS_AI_SETUP) {
-      setOpen(true);
-    }
-  }, [currentWizardPage.value, open, setOpen]);
-
   return (
     <Modal
       open={open}
