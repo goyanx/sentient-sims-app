@@ -21,6 +21,8 @@ import { AISelectionComponent } from './settings/AISelectionComponent';
 import { AnimationMappingSettingsComponent } from './settings/AnimationMappingSettingsComponent';
 import { KoboldAISettingsComponent } from './settings/KoboldAISettingsComponent';
 import { SentientSimsSettingsComponent } from './settings/SentientSimsSettingsComponent';
+import { OllamaSettingsComponent } from './settings/OllamaSettingsComponent';
+import { LMStudioSettingsComponent } from './settings/LMStudioSettingsComponent';
 import ApiKeyAIComponent from './ApiKeyAIComponent';
 import { AIEndpointComponent } from './settings/AIEndpointComponent';
 import AIModelSelection from './AIModelSelection';
@@ -139,6 +141,8 @@ export default function SettingsPage() {
           </NovelAISettingsComponent>
           <KoboldAISettingsComponent apiType={aiSettings.aiApiType} />
           <SentientSimsSettingsComponent apiType={aiSettings.aiApiType} />
+          <OllamaSettingsComponent apiType={aiSettings.aiApiType} />
+          <LMStudioSettingsComponent apiType={aiSettings.aiApiType} />
           <GeminiSettingsComponent apiType={aiSettings.aiApiType}>
             <ApiKeyAIComponent setting={SettingsEnum.GEMINI_KEYS} aiName="Gemini" />
             <AIEndpointComponent

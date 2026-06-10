@@ -48,6 +48,8 @@ import { SettingsService } from './SettingsService';
 import { UpdateService } from './UpdateService';
 import { VersionService } from './VersionService';
 import { VLLMAIService } from './VLLMAIService';
+import { OllamaService } from './OllamaService';
+import { LMStudioService } from './LMStudioService';
 
 export type ApiContextParams = {
   port: number;
@@ -210,6 +212,8 @@ export class ApiContext {
   private readonly _geminiService: GeminiService;
   private readonly _vllmAIService: VLLMAIService;
   private readonly _openAIService: OpenAIService;
+  private readonly _ollamaService: OllamaService;
+  private readonly _lmStudioService: LMStudioService;
   private readonly _modelSettingsService: ModelSettingsService;
 
   private readonly _novelAITokenCounter: NovelAITokenCounter;
@@ -230,6 +234,8 @@ export class ApiContext {
     this._geminiService = new GeminiService(this);
     this._vllmAIService = new VLLMAIService(this);
     this._openAIService = new OpenAIService(this);
+    this._ollamaService = new OllamaService(this);
+    this._lmStudioService = new LMStudioService(this);
 
     this._novelAITokenCounter = new NovelAITokenCounter();
     this._openAITokenCounter = new OpenAITokenCounter();
@@ -368,6 +374,14 @@ export class ApiContext {
     return this._openAIService;
   }
 
+  private get ollamaService(): OllamaService {
+    return this._ollamaService;
+  }
+
+  private get lmStudioService(): LMStudioService {
+    return this._lmStudioService;
+  }
+
   get genai(): GenerationService {
     const aiType = this.settings.aiApiType;
     if (aiType === ApiType.SentientSimsAI || aiType === ApiType.CustomAI) {
@@ -388,6 +402,14 @@ export class ApiContext {
 
     if (aiType === ApiType.VLLM) {
       return this.vllmAIService;
+    }
+
+    if (aiType === ApiType.Ollama) {
+      return this.ollamaService;
+    }
+
+    if (aiType === ApiType.LMStudio) {
+      return this.lmStudioService;
     }
 
     return this.openAIService;
@@ -432,6 +454,10 @@ export class ApiContext {
       return this.settings.vllmModel;
     } else if (aiType === ApiType.NovelAI) {
       return this.settings.novelAIModel;
+    } else if (aiType === ApiType.Ollama) {
+      return this.settings.ollamaModel;
+    } else if (aiType === ApiType.LMStudio) {
+      return this.settings.lmstudioModel;
     }
 
     return undefined;

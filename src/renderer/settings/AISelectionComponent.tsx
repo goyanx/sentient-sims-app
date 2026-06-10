@@ -16,6 +16,12 @@ export function getAIHelperText(apiType: ApiType) {
   if (apiType === ApiType.Gemini) {
     return 'Google Gemini AI using your personal API keys (supports multiple keys separated by commas).';
   }
+  if (apiType === ApiType.Ollama) {
+    return 'Ollama — run any local model (Llama, Mistral, Phi, Gemma, etc.) completely offline.';
+  }
+  if (apiType === ApiType.LMStudio) {
+    return 'LM Studio — run local models via the LM Studio desktop app.';
+  }
 
   return 'Custom Local or remote AI running on your own PC';
 }
@@ -39,6 +45,8 @@ export function AISelectionComponent() {
         <MenuItem value={ApiType.KoboldAI}>Kobold AI</MenuItem>
         <MenuItem value={ApiType.Gemini}>Gemini</MenuItem>
         <MenuItem value={ApiType.VLLM}>VLLM</MenuItem>
+        <MenuItem value={ApiType.Ollama}>Ollama (Local)</MenuItem>
+        <MenuItem value={ApiType.LMStudio}>LM Studio (Local)</MenuItem>
       </Select>
       <FormHelperText>{getAIHelperText(aiApiType)}</FormHelperText>
       <HelpButton url="https://github.com/guspuffygit/sentient-sims-app/wiki/AI-Backends" />

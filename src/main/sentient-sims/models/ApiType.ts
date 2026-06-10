@@ -8,6 +8,8 @@ export enum ApiType {
   Gemini = 'gemini',
   Kokoro = 'kokoro',
   ElevenLabs = 'elevenlabs',
+  Ollama = 'ollama',
+  LMStudio = 'lmstudio',
 }
 
 export function ApiTypeFromValue(value: any): ApiType {
@@ -28,6 +30,10 @@ export function ApiTypeFromValue(value: any): ApiType {
       return ApiType.ElevenLabs;
     case ApiType.VLLM:
       return ApiType.VLLM;
+    case ApiType.Ollama:
+      return ApiType.Ollama;
+    case ApiType.LMStudio:
+      return ApiType.LMStudio;
     default:
       return ApiType.OpenAI;
   }
@@ -51,6 +57,10 @@ export function ApiTypeName(apiType: ApiType): string {
       return 'Kokoro';
     case ApiType.ElevenLabs:
       return 'ElevenLabs';
+    case ApiType.Ollama:
+      return 'Ollama';
+    case ApiType.LMStudio:
+      return 'LM Studio';
     default:
       return 'AI';
   }

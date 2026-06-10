@@ -12,6 +12,8 @@ import {
   defaultTTSEnabled,
   defaultTTSVolume,
   defaultVLLMEndpoint,
+  defaultOllamaEndpoint,
+  defaultLMStudioEndpoint,
   geminiDefaultEndpoint,
   koboldaiDefaultEndpoint,
   novelaiDefaultEndpoint,
@@ -168,6 +170,22 @@ export function defaultStore(cwd?: string) {
       [SettingsEnum.VLLM_ENDPOINT.toString()]: {
         type: 'string',
         default: defaultVLLMEndpoint,
+      },
+      [SettingsEnum.OLLAMA_ENDPOINT.toString()]: {
+        type: 'string',
+        default: defaultOllamaEndpoint,
+      },
+      [SettingsEnum.OLLAMA_MODEL.toString()]: {
+        type: 'string',
+        default: '',
+      },
+      [SettingsEnum.LMSTUDIO_ENDPOINT.toString()]: {
+        type: 'string',
+        default: defaultLMStudioEndpoint,
+      },
+      [SettingsEnum.LMSTUDIO_MODEL.toString()]: {
+        type: 'string',
+        default: '',
       },
       [SettingsEnum.SETUP_WIZARD_PAGE.toString()]: {
         type: 'string',
@@ -539,6 +557,38 @@ export class SettingsService {
 
   set vllmModel(value: string) {
     this.set(SettingsEnum.VLLM_MODEL, value);
+  }
+
+  get ollamaEndpoint(): string {
+    return this.get(SettingsEnum.OLLAMA_ENDPOINT) as string;
+  }
+
+  set ollamaEndpoint(value: string) {
+    this.set(SettingsEnum.OLLAMA_ENDPOINT, value);
+  }
+
+  get ollamaModel(): string | undefined {
+    return stringOrUndefined(this.get(SettingsEnum.OLLAMA_MODEL));
+  }
+
+  set ollamaModel(value: string) {
+    this.set(SettingsEnum.OLLAMA_MODEL, value);
+  }
+
+  get lmstudioEndpoint(): string {
+    return this.get(SettingsEnum.LMSTUDIO_ENDPOINT) as string;
+  }
+
+  set lmstudioEndpoint(value: string) {
+    this.set(SettingsEnum.LMSTUDIO_ENDPOINT, value);
+  }
+
+  get lmstudioModel(): string | undefined {
+    return stringOrUndefined(this.get(SettingsEnum.LMSTUDIO_MODEL));
+  }
+
+  set lmstudioModel(value: string) {
+    this.set(SettingsEnum.LMSTUDIO_MODEL, value);
   }
 
   get maxResponseTokens(): number {

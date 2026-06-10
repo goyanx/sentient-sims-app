@@ -52,6 +52,9 @@ export default function VoiceSettingsComponent() {
                   onChange={(change) => aiSettings.ttsApiTypeSetting.setSetting(ApiTypeFromValue(change.target.value))}
                 >
                   <MenuItem value={ApiType.SentientSimsAI}>Sentient Sims AI TTS</MenuItem>
+                  <MenuItem value={ApiType.Kokoro}>Kokoro TTS (Local)</MenuItem>
+                  <MenuItem value={ApiType.OpenAI}>OpenAI TTS</MenuItem>
+                  <MenuItem value={ApiType.ElevenLabs}>ElevenLabs TTS</MenuItem>
                 </Select>
               </Stack>
             </Box>

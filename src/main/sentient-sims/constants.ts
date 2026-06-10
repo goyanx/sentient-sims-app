@@ -64,3 +64,5 @@ export const defaultMaxResponseTokens = 90;
 export const defaultElevenLabsEndpoint = 'https://api.elevenlabs.io/v1';
 export const defaultKokoroEndpoint = 'https://api.kokorotts.com';
 export const defaultVLLMEndpoint = 'http://localhost:8000/v1';
+export const defaultOllamaEndpoint = 'http://localhost:11434';
+export const defaultLMStudioEndpoint = 'http://localhost:1234';

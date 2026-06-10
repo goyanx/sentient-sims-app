@@ -65,6 +65,7 @@ const createWindow = async () => {
     show: false,
     width: 1400,
     height: 850,
+    title: 'Sentient Sims — gonx edition',
     autoHideMenuBar: true,
     icon: getAssetPath('icon.png'),
     thickFrame: false,
