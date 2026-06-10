@@ -1,4 +1,4 @@
-import { Box, Chip, FormHelperText, Grid, MenuItem, Select, Stack, Typography } from '@mui/material';
+import { Box, FormHelperText, Grid, MenuItem, Select, Stack, Typography } from '@mui/material';
 import {
   defaultKokoroAITTSSettings,
   KokoroAISpeechModel,
@@ -13,7 +13,6 @@ import { SettingsEnum } from 'main/sentient-sims/models/SettingsEnum';
 import { TestVoiceButton } from 'renderer/components/VoiceTestButton';
 import WebGpuDebug from 'renderer/components/WebGpuDebug';
 import useSetting from 'renderer/hooks/useSetting';
-import { VOICES } from 'renderer/kokoro/voices';
 import { useTTS } from 'renderer/providers/AudioContextProvider';
 import { ApiType } from 'main/sentient-sims/models/ApiType';
 import { useAISettings } from 'renderer/providers/AISettingsProvider';
@@ -51,21 +50,10 @@ export function KokoroAIVoiceSettingsComponent() {
     });
   }
 
-  function handleVoiceChange(voice: string | KokoroAISpeechVoice[]) {
-    const voices: KokoroAISpeechVoice[] = [];
-    if (typeof voice === 'string') {
-      voice.split(',').forEach((v) => voices.push(toSpeechVoice(v)));
-    } else {
-      voice.forEach((v) => voices.push(v));
-    }
-
-    if (voices.length > 4) {
-      return;
-    }
-
+  function handleVoiceChange(voice: string) {
     kokoroaiTtsSettings.setSetting({
       model: kokoroaiTtsSettings.value.model,
-      voice: voices,
+      voice: [toSpeechVoice(voice)],
       response_format: kokoroaiTtsSettings.value.response_format,
       type: kokoroaiTtsSettings.value.type,
     });
@@ -106,16 +94,8 @@ export function KokoroAIVoiceSettingsComponent() {
               labelId="voice"
               id="voice"
               label="Voice"
-              multiple
-              value={kokoroaiTtsSettings.value.voice}
+              value={kokoroaiTtsSettings.value.voice[0] ?? ''}
               onChange={(change) => handleVoiceChange(change.target.value)}
-              renderValue={(selected) => (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip key={value} label={VOICES[value].name} />
-                  ))}
-                </Box>
-              )}
             >
               {voiceMenuItems}
             </Select>
@@ -157,11 +137,6 @@ export function KokoroAIVoiceSettingsComponent() {
               WebGPU is Experimental. Kokoro runs completely locally using the power of your graphics card. Depending on
               the specs and configuration of your computer it may run too slow.
             </FormHelperText>
-          </Box>
-        ) : null}
-        {kokoroaiTtsSettings.value.type === KokoroType.WebGPU && kokoroaiTtsSettings.value.voice.length > 1 ? (
-          <Box display="flex" alignItems="center" sx={{ marginBottom: 2 }}>
-            <FormHelperText error>Only one Kokoro Voice can be selected when using WebGPU</FormHelperText>
           </Box>
         ) : null}
         <Box display="flex" alignItems="center" sx={{ marginBottom: 2 }}>
