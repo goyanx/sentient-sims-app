@@ -16,6 +16,7 @@
   "dependencies": {
     "@huggingface/transformers": "^3.8.1",
     "better-sqlite3": "12.4.1",
+    "kokoro-js": "^1.2.1",
     "node-gyp": "11.4.2"
   }
 }

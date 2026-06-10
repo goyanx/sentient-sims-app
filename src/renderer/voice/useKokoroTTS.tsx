@@ -11,44 +11,50 @@ import {
 } from 'main/sentient-sims/models/KokoroAITTSSettings';
 import { TTSHook } from './TTSHook';
 
-// Cached pipeline instance — loading takes time, so we reuse it
-let cachedPipeline: any = null;
-let pipelineLoading: Promise<any> | null = null;
+// Cached KokoroTTS instance — loading the model (~300MB) takes time
+let cachedKokoro: any = null;
+let kokoroLoading: Promise<any> | null = null;
 
-async function getWebGPUPipeline(): Promise<any> {
-  if (cachedPipeline) return cachedPipeline;
-  if (pipelineLoading) return pipelineLoading;
+async function getKokoroInstance(): Promise<any> {
+  if (cachedKokoro) return cachedKokoro;
+  if (kokoroLoading) return kokoroLoading;
 
-  pipelineLoading = (async () => {
-    const { pipeline, env } = await import('@huggingface/transformers');
-    // Allow downloading model files from HuggingFace Hub
-    env.allowLocalModels = false;
-
-    log.info('Kokoro WebGPU: loading text-to-speech pipeline…');
-    const synthesizer = await pipeline('text-to-speech', 'Xenova/mms-tts-eng', {
-      device: 'webgpu' as any,
+  kokoroLoading = (async () => {
+    const { KokoroTTS } = await import('kokoro-js');
+    log.info('Kokoro WebGPU: loading model from HuggingFace Hub…');
+    const tts = await KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', {
+      dtype: 'fp32',
+      device: 'webgpu',
     });
-    log.info('Kokoro WebGPU: pipeline ready');
-    cachedPipeline = synthesizer;
-    pipelineLoading = null;
-    return synthesizer;
+    log.info('Kokoro WebGPU: model ready');
+    cachedKokoro = tts;
+    kokoroLoading = null;
+    return tts;
   })();
 
-  return pipelineLoading;
+  return kokoroLoading;
 }
 
-async function playFloat32Audio(audioData: Float32Array, sampleRate: number, volume: number): Promise<void> {
-  const audioCtx = new AudioContext({ sampleRate });
-  const buffer = audioCtx.createBuffer(1, audioData.length, sampleRate);
-  buffer.copyToChannel(audioData as Float32Array<ArrayBuffer>, 0);
+async function speakWebGPU(text: string, voice: string, speed: number, volume: number): Promise<void> {
+  const tts = await getKokoroInstance();
+
+  log.debug(`Kokoro WebGPU: voice=${voice} speed=${speed} text="${text.slice(0, 60)}"`);
+  const result = await tts.generate(text, { voice, speed });
+
+  const { audio, sampling_rate: samplingRate } = result;
+  if (!audio) throw new Error('Kokoro WebGPU returned no audio');
+
+  const audioCtx = new AudioContext({ sampleRate: samplingRate ?? 24000 });
+  const buffer = audioCtx.createBuffer(1, audio.length, samplingRate ?? 24000);
+  buffer.copyToChannel(audio as Float32Array<ArrayBuffer>, 0);
 
   const source = audioCtx.createBufferSource();
   source.buffer = buffer;
 
-  const gainNode = audioCtx.createGain();
-  gainNode.gain.value = volume;
-  source.connect(gainNode);
-  gainNode.connect(audioCtx.destination);
+  const gain = audioCtx.createGain();
+  gain.gain.value = volume;
+  source.connect(gain);
+  gain.connect(audioCtx.destination);
 
   await new Promise<void>((resolve) => {
     source.onended = () => {
@@ -65,15 +71,16 @@ async function speakRemote(
   settings: KokoroAITTSSettings,
   volume: number,
 ): Promise<void> {
-  const voice = settings.voice.join('+') || 'af_heart';
+  const voice = settings.voice[0] ?? 'af_heart';
   const body = {
     model: settings.model,
     input: text,
     voice,
     response_format: settings.response_format ?? 'wav',
+    speed: settings.speed ?? 1.0,
   };
 
-  log.debug(`Kokoro remote TTS: POST ${endpoint}/v1/audio/speech`);
+  log.debug(`Kokoro remote TTS: POST ${endpoint}/v1/audio/speech voice=${voice}`);
 
   const response = await fetch(`${endpoint}/v1/audio/speech`, {
     method: 'POST',
@@ -104,20 +111,6 @@ async function speakRemote(
   });
 }
 
-async function speakWebGPU(text: string, volume: number): Promise<void> {
-  const synthesizer = await getWebGPUPipeline();
-  log.debug(`Kokoro WebGPU TTS: synthesizing "${text.slice(0, 60)}…"`);
-
-  const result: any = await synthesizer(text);
-  const { audio, sampling_rate: samplingRate } = result;
-
-  if (!audio || !(audio instanceof Float32Array)) {
-    throw new Error('WebGPU TTS returned no audio data');
-  }
-
-  await playFloat32Audio(audio, samplingRate ?? 16000, volume);
-}
-
 export function useKokoroTTS(): TTSHook {
   const aiSettings = useAISettings();
   const kokoroEndpointSetting = useSetting<string>(SettingsEnum.KOKOROAI_ENDPOINT, defaultKokoroEndpoint);
@@ -138,12 +131,14 @@ export function useKokoroTTS(): TTSHook {
       setIsPlaying(true);
 
       try {
-        const { type } = kokoroTTSSettings.value;
+        const { type, voice, speed } = kokoroTTSSettings.value;
+        const selectedVoice = voice[0] ?? 'af_heart';
+        const selectedSpeed = speed ?? 1.0;
 
         if (type === KokoroType.Remote) {
           await speakRemote(text, kokoroEndpointSetting.value, kokoroTTSSettings.value, aiSettings.ttsVolume);
         } else {
-          await speakWebGPU(text, aiSettings.ttsVolume);
+          await speakWebGPU(text, selectedVoice, selectedSpeed, aiSettings.ttsVolume);
         }
       } catch (err: any) {
         log.error('Kokoro TTS error:', err);

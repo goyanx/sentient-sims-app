@@ -1,4 +1,4 @@
-import { Box, FormHelperText, Grid, MenuItem, Select, Stack, Typography } from '@mui/material';
+import { Box, FormHelperText, Grid, MenuItem, Select, Slider, Stack, Typography } from '@mui/material';
 import {
   defaultKokoroAITTSSettings,
   KokoroAISpeechModel,
@@ -42,31 +42,22 @@ export function KokoroAIVoiceSettingsComponent() {
   });
 
   function handleModelChange(model: string) {
-    kokoroaiTtsSettings.setSetting({
-      model: toSpeechModel(model),
-      voice: kokoroaiTtsSettings.value.voice,
-      response_format: kokoroaiTtsSettings.value.response_format,
-      type: kokoroaiTtsSettings.value.type,
-    });
+    kokoroaiTtsSettings.setSetting({ ...kokoroaiTtsSettings.value, model: toSpeechModel(model) });
   }
 
   function handleVoiceChange(voice: string) {
-    kokoroaiTtsSettings.setSetting({
-      model: kokoroaiTtsSettings.value.model,
-      voice: [toSpeechVoice(voice)],
-      response_format: kokoroaiTtsSettings.value.response_format,
-      type: kokoroaiTtsSettings.value.type,
-    });
+    kokoroaiTtsSettings.setSetting({ ...kokoroaiTtsSettings.value, voice: [toSpeechVoice(voice)] });
   }
 
   function handleTypeChange(type: KokoroType) {
-    kokoroaiTtsSettings.setSetting({
-      model: kokoroaiTtsSettings.value.model,
-      voice: kokoroaiTtsSettings.value.voice,
-      response_format: kokoroaiTtsSettings.value.response_format,
-      type,
-    });
+    kokoroaiTtsSettings.setSetting({ ...kokoroaiTtsSettings.value, type });
   }
+
+  function handleSpeedChange(speed: number) {
+    kokoroaiTtsSettings.setSetting({ ...kokoroaiTtsSettings.value, speed });
+  }
+
+  const speed = kokoroaiTtsSettings.value.speed ?? 1.0;
 
   return (
     <Grid size={{ xs: 12, sm: 8 }}>
@@ -103,6 +94,25 @@ export function KokoroAIVoiceSettingsComponent() {
         </Box>
         <Box display="flex" alignItems="center" sx={{ marginBottom: 1 }}>
           <Stack direction="row" justifyContent="space-between" sx={{ alignItems: 'center', mb: 1, width: '100%' }}>
+            <Typography>Speed: {speed.toFixed(1)}x</Typography>
+            <Box sx={{ width: 200 }}>
+              <Slider
+                value={speed}
+                onChange={(_e, val) => handleSpeedChange(val as number)}
+                min={0.5}
+                max={2.0}
+                step={0.1}
+                marks={[
+                  { value: 0.5, label: '0.5x' },
+                  { value: 1.0, label: '1x' },
+                  { value: 2.0, label: '2x' },
+                ]}
+              />
+            </Box>
+          </Stack>
+        </Box>
+        <Box display="flex" alignItems="center" sx={{ marginBottom: 1 }}>
+          <Stack direction="row" justifyContent="space-between" sx={{ alignItems: 'center', mb: 1, width: '100%' }}>
             <Typography>Local/Remote</Typography>
             <Select
               size="small"
@@ -134,8 +144,7 @@ export function KokoroAIVoiceSettingsComponent() {
         {kokoroaiTtsSettings.value.type === KokoroType.WebGPU ? (
           <Box display="flex" alignItems="center" sx={{ marginBottom: 2 }}>
             <FormHelperText>
-              WebGPU is Experimental. Kokoro runs completely locally using the power of your graphics card. Depending on
-              the specs and configuration of your computer it may run too slow.
+              WebGPU runs Kokoro completely locally on your GPU. The model downloads on first use (~300MB).
             </FormHelperText>
           </Box>
         ) : null}

@@ -42,6 +42,7 @@ export type KokoroAITTSSettings = {
   voice: KokoroAISpeechVoice[];
   response_format: 'wav';
   type: KokoroType;
+  speed?: number;
 };
 
 export const defaultKokoroAITTSSettings: KokoroAITTSSettings = {
@@ -49,6 +50,7 @@ export const defaultKokoroAITTSSettings: KokoroAITTSSettings = {
   voice: [KokoroAISpeechVoice.Heart],
   response_format: 'wav',
   type: KokoroType.Remote,
+  speed: 1.0,
 };
 
 export function toSpeechModel(model?: string): KokoroAISpeechModel {
