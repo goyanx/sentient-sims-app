@@ -14,6 +14,7 @@
     "link-modules": "node --import tsx ../../.erb/scripts/link-modules.ts"
   },
   "dependencies": {
+    "@huggingface/transformers": "^3.8.1",
     "better-sqlite3": "12.4.1",
     "node-gyp": "11.4.2"
   }

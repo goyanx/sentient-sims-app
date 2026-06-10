@@ -3,6 +3,7 @@ import log from 'electron-log';
 import { ApiType } from 'main/sentient-sims/models/ApiType';
 import { useElevenLabsTTS } from 'renderer/voice/useElevenLabsTTS';
 import { useSentientSimsTTS } from 'renderer/voice/useSentientSimsTTS';
+import { useKokoroTTS } from 'renderer/voice/useKokoroTTS';
 import { useAISettings } from './AISettingsProvider';
 
 interface TTSAudioContextType {
@@ -42,6 +43,7 @@ export function AudioContextProvider({ children }: AudioContextProviderProps) {
   const aiSettings = useAISettings();
   const sentientSimsTTS = useSentientSimsTTS();
   const elevenLabsTTS = useElevenLabsTTS();
+  const kokoroTTS = useKokoroTTS();
   const [isWebGPUSupported, setIsWebGPUSupported] = useState<boolean | null>(null);
 
   const tts = useMemo(() => {
@@ -51,7 +53,10 @@ export function AudioContextProvider({ children }: AudioContextProviderProps) {
     if (aiSettings.ttsApiType === ApiType.ElevenLabs) {
       return elevenLabsTTS;
     }
-  }, [aiSettings.ttsApiType, elevenLabsTTS, sentientSimsTTS]);
+    if (aiSettings.ttsApiType === ApiType.Kokoro) {
+      return kokoroTTS;
+    }
+  }, [aiSettings.ttsApiType, elevenLabsTTS, sentientSimsTTS, kokoroTTS]);
 
   useEffect(() => {
     async function checkSupport() {
